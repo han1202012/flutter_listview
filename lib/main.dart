@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-const NAMES = [ '宋江', '卢俊义', '吴用', '公孙胜', '关胜',
-                '林冲', '秦明', '呼延灼', '花荣', '柴进',
-                '李应', '朱仝', '鲁智深', '武松', '董平',
-                '张清', '杨志', '徐宁', '索超', '岱宗',
-                '刘唐', '李逵', '史进', '穆弘' '雷横' ];
+const NAMES = {
+  '三十六天罡' : [ '宋江', '卢俊义', '吴用', '公孙胜', '关胜' ],
+  '七十二地煞' : [ '陈继真', '黄景元', '贾成', '呼颜', '鲁修德' ]
+};
+
+
 
 void main() {
   runApp(MyApp());
@@ -31,34 +32,53 @@ class _MyAppState extends State<MyApp> {
 
         /// 列表组件
         body: ListView(
-          /// 水平滚动设置
-          scrollDirection: Axis.horizontal,
           children: _buildList(),
         ),
       ),
     );
   }
 
-  /// 创建列表
+  /// 创建列表 , 每个元素都是一个 ExpansionTile 组件
   List<Widget> _buildList(){
-    /// 遍历 NAMES 数组
-    /// 调用 map 方法遍历数组元素
-    return NAMES.map((name) => _generateWidget(name)).toList();
+    List<Widget> widgets = [];
+    NAMES.keys.forEach((key) {
+      widgets.add(_generateExpansionTileWidget(key, NAMES[key]));
+    });
+    return widgets;
   }
 
-  Widget _generateWidget(name){
-    return Container(
-      //height: 80,
-      width: 80,
-      //margin: EdgeInsets.only(bottom: 5),
-      margin: EdgeInsets.only(right: 5),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(color: Colors.black),
-      child: Text(
-        name,
+  /// 生成 ExpansionTile 组件 , children 是 List<Widget> 组件
+  Widget _generateExpansionTileWidget(tittle, List<String>? names){
+    return ExpansionTile(
+      title: Text(
+        tittle,
         style: TextStyle(
-            color: Colors.yellowAccent,
-            fontSize: 20
+          color: Colors.black54,
+          fontSize: 20
+        ),
+      ),
+      children: names!.map((name) => _generateWidget(name)).toList(),
+    );
+  }
+
+  /// 生成 ExpansionTile 下的 ListView 的单个组件
+  Widget _generateWidget(name){
+    /// 使用该组件可以使宽度撑满
+    return FractionallySizedBox(
+      widthFactor: 1,
+      child: Container(
+        height: 80,
+        //width: 80,
+        margin: EdgeInsets.only(bottom: 5),
+        //margin: EdgeInsets.only(right: 5),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(color: Colors.black),
+        child: Text(
+          name,
+          style: TextStyle(
+              color: Colors.yellowAccent,
+              fontSize: 20
+          ),
         ),
       ),
     );
